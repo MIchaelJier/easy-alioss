@@ -1,0 +1,22 @@
+{
+  "name": "webpack-yun-oss",
+  "version": "1.0.0",
+  "description": "A webpack plugin to upload assets to aliyun oss",
+  "main": "index.js",
+  "repository": "git@github.com:MIchaelJier/webpack-yun-oss.git",
+  "homepage": "https://github.com/MIchaelJier/webpack-yun-oss.git",
+  "author": "MichaelJier <chem908430737@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "servedemo": "cd ./packages/plugin-demo && vue-cli-service serve"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  
+  "workspaces": [
+    "./packages/plugin-demo",
+    "./packages/webpack-yun-oss"
+  ]
+}
