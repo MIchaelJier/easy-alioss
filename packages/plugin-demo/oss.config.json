@@ -1,0 +1,8 @@
+{
+  "accessKeyId": "xxxxxxxxxxxxx",
+  "accessKeySecret": "xxxxxxxxxxxxx",
+  "region": "xxxxxxxxxxxxx",
+  "bucket": "xxxxxxxxxxxxx",
+  "prefix": "test",
+  "limit": 6
+}
