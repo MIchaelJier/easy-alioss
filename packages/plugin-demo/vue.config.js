@@ -1,10 +1,10 @@
 'use strict'
 const path = require('path')
-const WebpackOssPlugin = require('webpack-yun-oss')
+const WebpackAliOSSPlugin = require('@gdyfe/webpack-alioss-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-
+console.log(WebpackAliOSSPlugin.getFormat())
 module.exports = {
   outputDir: 'dist',
   lintOnSave: false,
@@ -25,7 +25,14 @@ module.exports = {
       }
     },
     plugins: [
-      new WebpackOssPlugin()
+      new WebpackAliOSSPlugin()
     ] 
+  },
+  chainWebpack: config => {
+    // DefinePlugin
+     config.plugin('define').tap(args => {
+       args[0]['run_server'] = 'development'
+       return args
+     })
   }
 }

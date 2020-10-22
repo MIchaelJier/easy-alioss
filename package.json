@@ -7,10 +7,10 @@
   "homepage": "https://github.com/MIchaelJier/webpack-yun-oss.git",
   "author": "MichaelJier <chem908430737@icloud.com>",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "servedemo": "cd ./packages/plugin-demo && vue-cli-service serve",
-    "builddemo": "cd ./packages/plugin-demo && vue-cli-service build"
+    "builddemo": "cd ./packages/plugin-demo && vue-cli-service build",
+    "pluginpublish": "cd ./packages/@gdyfe/webpack-alioss-plugin && npm publish --access public"
   },
   "devDependencies": {
     "lerna": "^3.22.1"
@@ -18,6 +18,6 @@
   
   "workspaces": [
     "./packages/plugin-demo",
-    "./packages/webpack-yun-oss"
+    "./packages/@gdyfe/webpack-alioss-plugin"
   ]
 }

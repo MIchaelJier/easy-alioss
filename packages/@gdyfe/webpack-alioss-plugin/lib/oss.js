@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-// const { Worker } = require('webworker-threads')
 const OSS = require('ali-oss')
 const colors = require('ansi-colors')
 const log = require('fancy-log')
@@ -8,12 +7,18 @@ const utils = require('./utils')
 const regexp = utils.regexp
 
 class AliOSS {
-  constructor(options = {}) {
-    this.init(options)
-    const upload = this.upload
-    // this.worker = new Worker(function(){
-    //   this.upload = upload
-    // })
+  constructor(options) {
+    this.paramOptions = options
+    // this.init(options)
+  }
+
+  static getFormat(format = 'YYYYMMDDhhmm') {
+    if (!regexp.test(format)) {
+      throw new Error(
+        `参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成`
+      )
+    }
+    return utils.formatDate(new Date(), format)
   }
 
   getFormat(format = 'YYYYMMDDhhmm') {
@@ -26,38 +31,51 @@ class AliOSS {
   }
 
   async init(options) {
-    if (Object.prototype.toString.call(options) !== '[object Object]') {
-      throw new Error(`配置信息应该是Object`)
-    }
     const jsonName = 'oss.config.json'
-    const format = this.getFormat('YYYYMMDDhhmmSSss')
     const hasJson = await fs.existsSync(jsonName)
-    let jsonOptions = hasJson 
-    ? JSON.parse(
-      (await fs.readFileSync(jsonName, 'utf8')).toString()
-    )
-    : {}
+    let jsonOptions = {}
+    try {
+      jsonOptions = hasJson
+        ? JSON.parse((await fs.readFileSync(jsonName, 'utf8')).toString())
+        : {}
+    } catch (error) {
+      log(colors.red(`JSON配置有误! reason: ${error}`))
+    }
+
+    if (!options && !hasJson) {
+      throw new Error(
+        colors.red(`请配置插件信息，配置${jsonName}或new时传入参数`)
+      )
+    }
+    if (
+      Object.prototype.toString.call(options) !== '[object Object]' &&
+      !hasJson
+    ) {
+      throw new Error(colors.red(`传入配置信息应该是Object`))
+    }
+    if (
+      ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some((key) =>
+        hasJson ? !jsonOptions[key] : !options[key]
+      )
+    ) {
+      throw new Error(
+        colors.red(`请填写正确的accessKeyId、accessKeySecret和bucket`)
+      )
+    }
     this.uploadSum = 0
     this.config = Object.assign(
       {
         prefix: '',
         exclude: [/.*\.html$/],
-        format,
         deleteAll: false,
-        output: '',
         local: true,
-        limit: 5,
+        output: '',
+        limit: 5, 
+        // bucket: `guangdianyun-static-${process.env.run_server || process.env.NODE_ENV}`
       },
       options,
       jsonOptions
     )
-    if (
-      ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some(
-        (key) => !options[key] && !jsonOptions[key]
-      )
-    ) {
-      throw new Error(`请填写正确的accessKeyId、accessKeySecret和bucket`)
-    }
     if (this.config.format && !/[0-9]+/.test(this.config.format)) {
       throw new Error(`format应该是纯数字`)
     }
@@ -196,7 +214,7 @@ class AliOSS {
         log(colors.red(`${fileName}上传失败!`))
       }
     } catch (error) {
-      log(colors.red(`${fileName}上传失败!, reason: ${error}`))
+      log(colors.red(`${fileName}上传失败! reason: ${error}`))
     }
   }
 

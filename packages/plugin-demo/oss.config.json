@@ -1,8 +1,9 @@
 {
-  "accessKeyId": "xxxxxxxxxxxxx",
-  "accessKeySecret": "xxxxxxxxxxxxx",
-  "region": "xxxxxxxxxxxxx",
-  "bucket": "xxxxxxxxxxxxx",
+  "accessKeyId": "xxxxxxxxxxxxxxxxx",
+  "accessKeySecret": "xxxxxxxxxxxxxxxxx",
+  "region": "oss-cn-hangzhou",
+  "bucket": "xxxx",
   "prefix": "test",
-  "limit": 6
+  "limit": 6,
+  "format": ""
 }
