@@ -111,7 +111,7 @@ class AliOSS {
         })
       }
     } catch (error) {
-      log(colors.red(`删除缓存文件失败!`))
+      log(colors.red(`删除缓存文件失败! reason: ${error}`))
     }
   }
 

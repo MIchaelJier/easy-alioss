@@ -1,10 +1,10 @@
 'use strict'
 const path = require('path')
 const WebpackAliOSSPlugin = require('@gdyfe/webpack-alioss-plugin')
+const format = WebpackAliOSSPlugin.getFormat('YYMMDD')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-console.log(WebpackAliOSSPlugin.getFormat())
 module.exports = {
   outputDir: 'dist',
   lintOnSave: false,
@@ -25,7 +25,7 @@ module.exports = {
       }
     },
     plugins: [
-      new WebpackAliOSSPlugin()
+      new WebpackAliOSSPlugin({})
     ] 
   },
   chainWebpack: config => {

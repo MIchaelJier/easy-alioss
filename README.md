@@ -1,10 +1,10 @@
-# webpack-yun-oss
+# webpack-alioss-plugin
 A webpack plugin to upload assets to aliyun oss
 
 ## 安装 
 ```
 npm i @gdyfe/webpack-alioss-plugin --save
-yarn add gdy-rrweb-plugin -D
+yarn add @gdyfe/webpack-alioss-plugin -D
 ```
 ## 参数
 | 选项名          | 类型                 | 是否必填 | 默认值 | 描述                                                                                                                                 |
