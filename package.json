@@ -1,23 +1,36 @@
 {
   "name": "webpack-yun-oss",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A webpack plugin to upload assets to aliyun oss",
-  "main": "index.js",
+  "main": "index.js", 
   "repository": "git@github.com:MIchaelJier/webpack-yun-oss.git",
   "homepage": "https://github.com/MIchaelJier/webpack-yun-oss.git",
   "author": "MichaelJier <chem908430737@icloud.com>",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "servedemo": "cd ./packages/plugin-demo && vue-cli-service serve",
-    "builddemo": "cd ./packages/plugin-demo && vue-cli-service build",
-    "pluginpublish": "cd ./packages/@gdyfe/webpack-alioss-plugin && npm publish --access public"
+    "serve:demo": "cd ./packages/plugin-demo && vue-cli-service serve",
+    "build:demo": "cd ./packages/plugin-demo && vue-cli-service build",
+    "plugin:publish": "cd ./packages/webpack-alioss-plugin && npm publish --access public",
+    "plugin:build": "cd ./packages/webpack-alioss-plugin && rollup -c",
+    "plugin:tsc": "cd ./packages/webpack-alioss-plugin && tsc"
   },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "@typescript-eslint/parser": "^4.5.0",
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-config-webpack": "^1.2.5",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-typescript": "^0.14.0",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "prettier": "^2.1.2",
+    "typescript": "3.2.1"
   },
-  
   "workspaces": [
-    "./packages/plugin-demo",
-    "./packages/@gdyfe/webpack-alioss-plugin"
+    "packages/*"
   ]
 }

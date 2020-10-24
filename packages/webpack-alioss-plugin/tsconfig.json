@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "importHelpers": true,
+    "noEmitHelpers": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "outDir": "output",
+    "strict": true,
+    "target": "es6",
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "lib": [
+    "dom",
+    "dom.Iterable",
+    "es5",
+    "es2015.promise",
+    "es2015",
+    "es2016",
+    "es2017",
+    "es2018",
+    "es2019",
+    "es2020"
+  ],
+  "include": ["lib/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/dist/**",
+    "**/static/**",
+    "**/config/**",
+    "**/*.test.ts"
+  ]
+}

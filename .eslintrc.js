@@ -1,12 +1,16 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
+    node: true, 
   },
-  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
-  parserOptions: {
-    parser: 'babel-eslint',
+  extends: ['eslint:recommended', 'plugin:vue/essential', 'plugin:@typescript-eslint/recommended', '@vue/prettier'],
+  parserOptions: { 
+      ecmaVersion: 12,  
+      parser: '@typescript-eslint/parser',
+      sourceType: 'module',
   },
+  plugins: ['vue', '@typescript-eslint'],
+  parser: 'vue-eslint-parser',
   rules: {
     // 0，1，2 分别表示 off, warning, error
 

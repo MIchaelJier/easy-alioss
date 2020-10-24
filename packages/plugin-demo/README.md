@@ -1,24 +1,11 @@
-# plugin-demo
+# `plugin-demo`
 
-## Project setup
-```
-yarn install
-```
+> TODO: description
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## Usage
 
-### Compiles and minifies for production
 ```
-yarn build
-```
+const pluginDemo = require('plugin-demo');
 
-### Lints and fixes files
+// TODO: DEMONSTRATE API
 ```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

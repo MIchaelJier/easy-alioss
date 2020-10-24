@@ -1,47 +1,69 @@
-const fs = require('fs')
-const path = require('path')
-const OSS = require('ali-oss')
-const colors = require('ansi-colors')
-const log = require('fancy-log')
-const utils = require('./utils')
-const regexp = utils.regexp
+import fs from 'fs'
+import path from 'path'
+import OSS from 'ali-oss'
+import colors from 'ansi-colors'
+import log from 'fancy-log'
+import { regexp as _exp, formatDate } from './utils'
+import { AliOSSConfig } from './types'
+const regexp: RegExp = _exp
+// const fs: any = require('fs')
+// const path: any = require('pathƒ')
+// const OSS: any = require('ali-oss')
+// const colors: any = require('ansi-colors')
+// const log: any = require('fancy-log')
+// const utils: any = require('./utils')
+// const { AliOSSConfig } = require('./types')
+// const regexp: any = regexp
 
 class AliOSS {
-  constructor(options) {
+  config: AliOSSConfig = {
+    accessKeyId: '',
+    accessKeySecret: '',
+    region: '',
+    bucket: '',
+    prefix: '',
+    exclude: [],
+    deleteAll: false,
+    local: false,
+    output: '',
+    limit: 5,
+    format: '',
+  }
+  paramOptions?: object
+  uploadSum = 0
+  client: any
+  assets: object = {}
+
+  constructor(options?: object) {
     this.paramOptions = options
-    // this.init(options)
   }
 
-  static getFormat(format = 'YYYYMMDDhhmm') {
+  static getFormat(format = 'YYYYMMDDhhmm'): string {
+    return this.getFormat(format)
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getFormat(format = 'YYYYMMDDhhmm'): string {
     if (!regexp.test(format)) {
       throw new Error(
         `参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成`
       )
     }
-    return utils.formatDate(new Date(), format)
+    return formatDate(new Date(), format)
   }
 
-  getFormat(format = 'YYYYMMDDhhmm') {
-    if (!regexp.test(format)) {
-      throw new Error(
-        `参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成`
-      )
-    }
-    return utils.formatDate(new Date(), format)
-  }
-
-  async init(options) {
+  async init(options?: object): Promise<void> {
     const jsonName = 'oss.config.json'
-    const hasJson = await fs.existsSync(jsonName)
-    let jsonOptions = {}
+    const hasJson: boolean = fs.existsSync(jsonName)
+    let jsonOptions: object = {}
+
     try {
       jsonOptions = hasJson
-        ? JSON.parse((await fs.readFileSync(jsonName, 'utf8')).toString())
+        ? JSON.parse(fs.readFileSync(jsonName, 'utf8').toString())
         : {}
     } catch (error) {
       log(colors.red(`JSON配置有误! reason: ${error}`))
     }
-
     if (!options && !hasJson) {
       throw new Error(
         colors.red(`请配置插件信息，配置${jsonName}或new时传入参数`)
@@ -55,14 +77,13 @@ class AliOSS {
     }
     if (
       ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some((key) =>
-        hasJson ? !jsonOptions[key] : !options[key]
+        hasJson ? !jsonOptions[key] : !(options as object)[key]
       )
     ) {
       throw new Error(
         colors.red(`请填写正确的accessKeyId、accessKeySecret和bucket`)
       )
     }
-    this.uploadSum = 0
     this.config = Object.assign(
       {
         prefix: '',
@@ -70,19 +91,19 @@ class AliOSS {
         deleteAll: false,
         local: true,
         output: '',
-        limit: 5, 
+        limit: 5,
         // bucket: `guangdianyun-static-${process.env.run_server || process.env.NODE_ENV}`
       },
       options,
       jsonOptions
-    )
+    ) as AliOSSConfig
     if (this.config.format && !/[0-9]+/.test(this.config.format)) {
       throw new Error(`format应该是纯数字`)
     }
     this.client = new OSS(this.config)
   }
 
-  async upload() {
+  async upload(): Promise<void> {
     if (this.config.format) {
       await this.delCacheAssets()
     } else if (this.config.deleteAll) {
@@ -92,11 +113,11 @@ class AliOSS {
     }
   }
 
-  async delFilterAssets(prefix) {
+  async delFilterAssets(prefix: string): Promise<void> {
     try {
-      const list = []
+      const list: Array<string> = []
       list.push(prefix)
-      let result = await this.client.list({
+      let result: any = await this.client.list({
         prefix,
         'max-keys': 1000,
       })
@@ -115,47 +136,49 @@ class AliOSS {
     }
   }
 
-  async delCacheAssets() {
-    const prefix = this.config.prefix
-    const list = []
+  async delCacheAssets(): Promise<void> {
+    const prefix: string = this.config.prefix
+    const list: Array<any> = []
     try {
-      const dirList = await this.client.list({
+      const dirList: any = await this.client.list({
         prefix: `${prefix}/`,
         delimiter: '/',
       })
       if (dirList.prefixes) {
-        dirList.prefixes.forEach((subDir) => {
+        dirList.prefixes.forEach((subDir: string) => {
           list.push(+subDir.slice(prefix.length + 1, -1))
         })
       }
 
       if (list.length > 1) {
-        const limit = this.config.limit > 3 ? this.config.limit - 1 : 2
-        const array = list
+        const limit: number = this.config.limit > 3 ? this.config.limit - 1 : 2
+        const array: Array<any> = list
           .slice()
           .sort((a, b) => b - a)
           .slice(limit)
-        await this.asyncForEach(array, async (item, index) => {
-          await this.delFilterAssets(`${prefix}/${item}`)
-        })
+        await this.asyncForEach(
+          array,
+          async (item: string): Promise<void> => {
+            await this.delFilterAssets(`${prefix}/${item}`)
+          }
+        )
       }
-
       await this.uploadAssets()
     } catch (error) {
       await this.uploadAssets()
     }
   }
 
-  async asyncForEach(arr, cb) {
+  async asyncForEach(arr: Array<any>, cb: Function): Promise<void> {
     for (let i = 0; i < arr.length; i++) {
       await cb(arr[i], i)
     }
   }
 
-  async delAllAssets() {
+  async delAllAssets(): Promise<void> {
     try {
       const { prefix } = this.config
-      let result = await this.client.list({
+      let result: any = await this.client.list({
         prefix,
         'max-keys': 1000,
       })
@@ -171,42 +194,45 @@ class AliOSS {
     }
   }
 
-  async uploadAssets() {
+  async uploadAssets(): Promise<void> {
     if (this.config.local) {
       await this.uploadLocale(this.config.output)
     } else {
-      await this.asyncForEach(Object.keys(this.assets), async (name, index) => {
-        if (this.filterFile(name)) {
-          await this.update(
-            name,
-            Buffer.from(this.assets[name].source(), 'utf8')
-          )
+      await this.asyncForEach(
+        Object.keys(this.assets),
+        async (name: string) => {
+          if (this.filterFile(name)) {
+            await this.update(
+              name,
+              Buffer.from(this.assets[name].source(), 'utf8')
+            )
+          }
         }
-      })
+      )
     }
   }
 
-  filterFile(name) {
+  filterFile(name: string) {
     const { exclude } = this.config
     return (
       !exclude ||
       (Array.isArray(exclude) && !exclude.some((item) => item.test(name))) ||
-      (!Array.isArray(exclude) && !exclude.test(name))
+      (!Array.isArray(exclude) && !(exclude as any).test(name))
     )
   }
 
-  getFileName(name) {
+  getFileName(name: string): string {
     const { config } = this
-    const prefix = config.format
+    const prefix: string = config.format
       ? path.join(config.prefix, config.format.toString())
       : config.prefix
     return path.join(prefix, name).replace(/\\/g, '/')
   }
 
-  async update(name, content) {
-    const fileName = this.getFileName(name)
+  async update(name: string, content: any): Promise<void> {
+    const fileName: string = this.getFileName(name)
     try {
-      const result = await this.client.put(fileName, content)
+      const result: any = await this.client.put(fileName, content)
       if (+result.res.statusCode === 200) {
         this.uploadSum++
         // log(colors.green(`${fileName}上传成功!`))
@@ -218,15 +244,15 @@ class AliOSS {
     }
   }
 
-  async uploadLocale(dir) {
-    const result = fs.readdirSync(dir)
-    await this.asyncForEach(result, async (file) => {
-      const filePath = path.join(dir, file)
+  async uploadLocale(dir: string): Promise<void> {
+    const result: any = fs.readdirSync(dir)
+    await this.asyncForEach(result, async (file: string) => {
+      const filePath: string = path.join(dir, file)
       if (this.filterFile(filePath)) {
         if (fs.lstatSync(filePath).isDirectory()) {
           await this.uploadLocale(filePath)
         } else {
-          const fileName = filePath.slice(this.config.output.length)
+          const fileName: string = filePath.slice(this.config.output.length)
           await this.update(fileName, filePath)
         }
       }
@@ -234,4 +260,5 @@ class AliOSS {
   }
 }
 
-module.exports = AliOSS
+// module.exports = AliOSS
+export default AliOSS

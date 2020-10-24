@@ -1,19 +1,19 @@
-const fs = require('fs')
-const colors = require('ansi-colors')
-const log = require('fancy-log')
-const AliOSS = require('./oss')
-const ProgressBar = require('progress')
+import colors from 'ansi-colors'
+import log from 'fancy-log'
+import AliOSS from './oss'
+import ProgressBar from 'progress'
+// const colors: any = require('ansi-colors')
+// const log: any = require('fancy-log')
+// const AliOSS: any = require('./oss')
+// const ProgressBar: any = require('progress')
 
-class WebpackAliOSSPlugin extends AliOSS {
-  constructor(options) {
+export class WebpackAliOSSPlugin extends AliOSS {
+  constructor(options?: object) {
     super(options)
   }
 
-  async init(compiler) {
+  async init(compiler: any): Promise<void> {
     await super.init(this.paramOptions)
-    // if(!this.config.accessKeyId || !this.config.accessKeySecret) {
-    // throw new Error(`请填写正确的accessKeyId、accessKeySecret和bucket`)
-    // }
     if (!this.config.output && this.config.local) {
       const output = compiler.outputPath || compiler.options.output.path
       if (output) {
@@ -26,27 +26,30 @@ class WebpackAliOSSPlugin extends AliOSS {
       (this.config.format = super.getFormat('YYMMDD'))
   }
 
-  async apply(compiler) {
+  async apply(compiler: any): Promise<void> {
     await this.init(compiler)
     if (compiler.hooks) {
       compiler.hooks.afterEmit.tapPromise(
         'WebpackAliOSSPlugin',
-        (compilation) => {
+        (compilation: any) => {
           return new Promise(async (resolve, reject) => {
             // 上传文件总数
-            const uploadCount = Object.keys(compilation.assets).filter(
+            const uploadCount: number = Object.keys(compilation.assets).filter(
               (file) =>
                 compilation.assets[file].existsAt.includes(
                   this.config.output
                 ) &&
                 this.config.exclude &&
-                this.config.exclude.every((reg) => file.search(reg) === -1)
+                this.config.exclude.every(
+                  (reg: RegExp) => file.search(reg) === -1
+                )
             ).length
             // 初始化进度条 正在上传 [==---] 40%
-            const bar = new ProgressBar('正在上传 [:bar] :percent', {
+            const bar: any = new ProgressBar('正在上传 [:bar] :percent', {
               total: uploadCount,
             })
             // 检测uploadSum变化
+            // eslint-disable-next-line accessor-pairs
             Object.defineProperty(this, 'uploadSum', {
               set: function () {
                 bar.tick()
@@ -88,4 +91,3 @@ class WebpackAliOSSPlugin extends AliOSS {
   //   }
   // }
 }
-module.exports = WebpackAliOSSPlugin
