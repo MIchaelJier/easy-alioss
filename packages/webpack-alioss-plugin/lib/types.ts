@@ -13,6 +13,14 @@ export interface AliOSSConfig {
   format: string
 }
 
-// module.exports = {
-//   AliOSSConfig
-// }
+export type ParamOptions = {
+  [propName in keyof AliOSSConfig]?: AliOSSConfig[propName]
+}
+
+export interface Assets {
+  [propName: string]: any
+}
+
+export interface Compiler {
+  [propName: string]: any
+}

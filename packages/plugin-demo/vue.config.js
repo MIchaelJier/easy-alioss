@@ -1,6 +1,6 @@
 'use strict'
 const path = require('path')
-const { WebpackAliOSSPlugin } = require('@gdyfe/webpack-alioss-plugin')
+const WebpackAliOSSPlugin = require('@gdyfe/webpack-alioss-plugin')
 // const format = WebpackAliOSSPlugin.getFormat('YYMMDD')
 function resolve(dir) {
   return path.join(__dirname, dir)

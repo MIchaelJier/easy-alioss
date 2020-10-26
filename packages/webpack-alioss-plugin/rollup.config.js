@@ -8,17 +8,15 @@ import pkg from './package.json'
 export default [
   {
     input: 'lib/index.ts',
-    external: builtins, 
+    external: builtins,
     plugins: [
       nodeResolve(),
       commonjs({
-        include: 'node_modules/**'
+        include: 'node_modules/**',
       }),
       json(),
-      typescript() 
+      typescript(),
     ],
-    output: [
-      {  file: pkg.main, format: 'cjs' },
-    ]
-  }
+    output: [{ file: pkg.main, format: 'cjs' }],
+  },
 ]

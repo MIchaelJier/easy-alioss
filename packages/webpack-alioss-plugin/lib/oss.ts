@@ -4,19 +4,11 @@ import OSS from 'ali-oss'
 import colors from 'ansi-colors'
 import log from 'fancy-log'
 import { regexp as _exp, formatDate } from './utils'
-import { AliOSSConfig } from './types'
+import { AliOSSConfig, ParamOptions, Assets } from './types'
 const regexp: RegExp = _exp
-// const fs: any = require('fs')
-// const path: any = require('pathƒ')
-// const OSS: any = require('ali-oss')
-// const colors: any = require('ansi-colors')
-// const log: any = require('fancy-log')
-// const utils: any = require('./utils')
-// const { AliOSSConfig } = require('./types')
-// const regexp: any = regexp
 
 class AliOSS {
-  config: AliOSSConfig = {
+  protected config: AliOSSConfig = {
     accessKeyId: '',
     accessKeySecret: '',
     region: '',
@@ -29,12 +21,12 @@ class AliOSS {
     limit: 5,
     format: '',
   }
-  paramOptions?: object
-  uploadSum = 0
-  client: any
-  assets: object = {}
+  protected paramOptions?: ParamOptions
+  protected uploadSum = 0
+  protected client: any
+  protected assets: Assets = {}
 
-  constructor(options?: object) {
+  constructor(options?: ParamOptions) {
     this.paramOptions = options
   }
 
@@ -52,10 +44,10 @@ class AliOSS {
     return formatDate(new Date(), format)
   }
 
-  async init(options?: object): Promise<void> {
+  async init(options?: ParamOptions): Promise<void> {
     const jsonName = 'oss.config.json'
     const hasJson: boolean = fs.existsSync(jsonName)
-    let jsonOptions: object = {}
+    let jsonOptions: ParamOptions = {}
 
     try {
       jsonOptions = hasJson
@@ -76,8 +68,13 @@ class AliOSS {
       throw new Error(colors.red(`传入配置信息应该是Object`))
     }
     if (
-      ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some((key) =>
-        hasJson ? !jsonOptions[key] : !(options as object)[key]
+      [
+        'accessKeyId',
+        'accessKeySecret',
+        'bucket',
+        'region',
+      ].some((key: string) =>
+        (hasJson ? !jsonOptions[key] : !(options as object)[key])
       )
     ) {
       throw new Error(
@@ -104,7 +101,7 @@ class AliOSS {
   }
 
   async upload(): Promise<void> {
-    if (this.config.format) {
+    if (this.config.format && !isNaN(Number(this.config.format))) {
       await this.delCacheAssets()
     } else if (this.config.deleteAll) {
       await this.delAllAssets()
@@ -212,7 +209,7 @@ class AliOSS {
     }
   }
 
-  filterFile(name: string) {
+  filterFile(name: string): boolean {
     const { exclude } = this.config
     return (
       !exclude ||
@@ -260,5 +257,4 @@ class AliOSS {
   }
 }
 
-// module.exports = AliOSS
 export default AliOSS

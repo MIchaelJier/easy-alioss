@@ -19,6 +19,7 @@ exports.formatDate = function (date = '', format = 'YYYYMMDDHHmm') {
     date = exports.getDate(date);
     const padDate = (time) => time < 10 ? '0' + time : time;
     return format.replace(exports.regexp, function (key) {
+        // eslint-disable-next-line default-case
         switch (key) {
             case 'YYYY':
                 return date.getFullYear();

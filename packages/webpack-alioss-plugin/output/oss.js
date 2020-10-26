@@ -8,14 +8,6 @@ const ansi_colors_1 = tslib_1.__importDefault(require("ansi-colors"));
 const fancy_log_1 = tslib_1.__importDefault(require("fancy-log"));
 const utils_1 = require("./utils");
 const regexp = utils_1.regexp;
-// const fs: any = require('fs')
-// const path: any = require('pathƒ')
-// const OSS: any = require('ali-oss')
-// const colors: any = require('ansi-colors')
-// const log: any = require('fancy-log')
-// const utils: any = require('./utils')
-// const { AliOSSConfig } = require('./types')
-// const regexp: any = regexp
 class AliOSS {
     constructor(options) {
         this.config = {
@@ -38,6 +30,7 @@ class AliOSS {
     static getFormat(format = 'YYYYMMDDhhmm') {
         return this.getFormat(format);
     }
+    // eslint-disable-next-line class-methods-use-this
     getFormat(format = 'YYYYMMDDhhmm') {
         if (!regexp.test(format)) {
             throw new Error(`参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成`);
@@ -83,7 +76,7 @@ class AliOSS {
     }
     upload() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            if (this.config.format) {
+            if (this.config.format && !isNaN(Number(this.config.format))) {
                 yield this.delCacheAssets();
             }
             else if (this.config.deleteAll) {
@@ -241,5 +234,4 @@ class AliOSS {
         });
     }
 }
-// module.exports = AliOSS
 exports.default = AliOSS;

@@ -1,14 +1,14 @@
-import { AliOSSConfig } from './types';
+import { AliOSSConfig, ParamOptions, Assets } from './types';
 declare class AliOSS {
-    config: AliOSSConfig;
-    paramOptions?: object;
-    uploadSum: number;
-    client: any;
-    assets: object;
-    constructor(options?: object);
+    protected config: AliOSSConfig;
+    protected paramOptions?: ParamOptions;
+    protected uploadSum: number;
+    protected client: any;
+    protected assets: Assets;
+    constructor(options?: ParamOptions);
     static getFormat(format?: string): string;
     getFormat(format?: string): string;
-    init(options?: object): Promise<void>;
+    init(options?: ParamOptions): Promise<void>;
     upload(): Promise<void>;
     delFilterAssets(prefix: string): Promise<void>;
     delCacheAssets(): Promise<void>;

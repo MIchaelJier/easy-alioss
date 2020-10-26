@@ -11,3 +11,12 @@ export interface AliOSSConfig {
     limit: number;
     format: string;
 }
+export declare type ParamOptions = {
+    [propName in keyof AliOSSConfig]?: AliOSSConfig[propName];
+};
+export interface Assets {
+    [propName: string]: any;
+}
+export interface Compiler {
+    [propName: string]: any;
+}

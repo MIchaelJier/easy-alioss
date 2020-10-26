@@ -2,17 +2,14 @@ import colors from 'ansi-colors'
 import log from 'fancy-log'
 import AliOSS from './oss'
 import ProgressBar from 'progress'
-// const colors: any = require('ansi-colors')
-// const log: any = require('fancy-log')
-// const AliOSS: any = require('./oss')
-// const ProgressBar: any = require('progress')
+import { Compiler, Assets } from './types'
 
-export class WebpackAliOSSPlugin extends AliOSS {
-  constructor(options?: object) {
-    super(options)
-  }
+class WebpackAliOSSPlugin extends AliOSS {
+  // constructor(options?: object) {
+  //   super(options)
+  // }
 
-  async init(compiler: any): Promise<void> {
+  async init(compiler: Compiler): Promise<void> {
     await super.init(this.paramOptions)
     if (!this.config.output && this.config.local) {
       const output = compiler.outputPath || compiler.options.output.path
@@ -22,16 +19,17 @@ export class WebpackAliOSSPlugin extends AliOSS {
         throw new Error(colors.red(`请配置output`))
       }
     }
+    // eslint-disable-next-line no-undefined
     this.config.format === undefined &&
       (this.config.format = super.getFormat('YYMMDD'))
   }
 
-  async apply(compiler: any): Promise<void> {
+  async apply(compiler: Compiler): Promise<void> {
     await this.init(compiler)
     if (compiler.hooks) {
       compiler.hooks.afterEmit.tapPromise(
         'WebpackAliOSSPlugin',
-        (compilation: any) => {
+        (compilation: Assets) => {
           return new Promise(async (resolve, reject) => {
             // 上传文件总数
             const uploadCount: number = Object.keys(compilation.assets).filter(
@@ -62,7 +60,7 @@ export class WebpackAliOSSPlugin extends AliOSS {
                 }
               },
             })
-            await this.upload()
+            await this.uploads(compilation)
             resolve()
           })
         }
@@ -74,20 +72,21 @@ export class WebpackAliOSSPlugin extends AliOSS {
     }
   }
 
-  // async upload(compilation, callback) {
-  //   if (typeof compilation === 'undefined') {
-  //     return this.uploadAssets()
-  //   }
-  //   this.assets = compilation.assets
-  //   if (this.config.format && !isNaN(Number(this.config.format))) {
-  //     await this.delCacheAssets()
-  //   } else if (this.config.deleteAll) {
-  //     await this.delAllAssets()
-  //   } else {
-  //     await this.uploadAssets()
-  //   }
-  //   if (typeof callback === 'function') {
-  //     callback()
-  //   }
-  // }
+  async uploads(
+    compilation: Assets,
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    callback?: Function
+    // eslint-disable-next-line @typescript-eslint/ban-types
+  ): Promise<void | Function> {
+    if (typeof compilation === 'undefined') {
+      return this.uploadAssets()
+    }
+    this.assets = compilation.assets
+    await super.upload()
+    if (typeof callback === 'function') {
+      callback()
+    }
+  }
 }
+
+export = WebpackAliOSSPlugin

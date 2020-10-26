@@ -1,18 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const ansi_colors_1 = tslib_1.__importDefault(require("ansi-colors"));
 const fancy_log_1 = tslib_1.__importDefault(require("fancy-log"));
 const oss_1 = tslib_1.__importDefault(require("./oss"));
 const progress_1 = tslib_1.__importDefault(require("progress"));
-// const colors: any = require('ansi-colors')
-// const log: any = require('fancy-log')
-// const AliOSS: any = require('./oss')
-// const ProgressBar: any = require('progress')
 class WebpackAliOSSPlugin extends oss_1.default {
-    constructor(options) {
-        super(options);
-    }
+    // constructor(options?: object) {
+    //   super(options)
+    // }
     init(compiler) {
         const _super = Object.create(null, {
             init: { get: () => super.init },
@@ -29,6 +24,7 @@ class WebpackAliOSSPlugin extends oss_1.default {
                     throw new Error(ansi_colors_1.default.red(`请配置output`));
                 }
             }
+            // eslint-disable-next-line no-undefined
             this.config.format === undefined &&
                 (this.config.format = _super.getFormat.call(this, 'YYMMDD'));
         });
@@ -48,6 +44,7 @@ class WebpackAliOSSPlugin extends oss_1.default {
                             total: uploadCount,
                         });
                         // 检测uploadSum变化
+                        // eslint-disable-next-line accessor-pairs
                         Object.defineProperty(this, 'uploadSum', {
                             set: function () {
                                 bar.tick();
@@ -56,7 +53,7 @@ class WebpackAliOSSPlugin extends oss_1.default {
                                 }
                             },
                         });
-                        yield this.upload();
+                        yield this.uploads(compilation);
                         resolve();
                     }));
                 });
@@ -68,5 +65,24 @@ class WebpackAliOSSPlugin extends oss_1.default {
             }
         });
     }
+    uploads(compilation, 
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    callback
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    ) {
+        const _super = Object.create(null, {
+            upload: { get: () => super.upload }
+        });
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            if (typeof compilation === 'undefined') {
+                return this.uploadAssets();
+            }
+            this.assets = compilation.assets;
+            yield _super.upload.call(this);
+            if (typeof callback === 'function') {
+                callback();
+            }
+        });
+    }
 }
-exports.WebpackAliOSSPlugin = WebpackAliOSSPlugin;
+module.exports = WebpackAliOSSPlugin;

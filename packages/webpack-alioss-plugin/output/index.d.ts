@@ -1,6 +1,8 @@
 import AliOSS from './oss';
-export declare class WebpackAliOSSPlugin extends AliOSS {
-    constructor(options?: object);
-    init(compiler: any): Promise<void>;
-    apply(compiler: any): Promise<void>;
+import { Compiler, Assets } from './types';
+declare class WebpackAliOSSPlugin extends AliOSS {
+    init(compiler: Compiler): Promise<void>;
+    apply(compiler: Compiler): Promise<void>;
+    uploads(compilation: Assets, callback?: Function): Promise<void | Function>;
 }
+export = WebpackAliOSSPlugin;
