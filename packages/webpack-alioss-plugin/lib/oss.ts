@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import fs from 'fs'
 import path from 'path'
 import OSS from 'ali-oss'
@@ -8,7 +10,7 @@ import { AliOSSConfig, ParamOptions, Assets } from './types'
 const regexp: RegExp = _exp
 
 class AliOSS {
-  protected config: AliOSSConfig = {
+  config: AliOSSConfig = {
     accessKeyId: '',
     accessKeySecret: '',
     region: '',
@@ -21,10 +23,10 @@ class AliOSS {
     limit: 5,
     format: '',
   }
-  protected paramOptions?: ParamOptions
-  protected uploadSum = 0
-  protected client: any
-  protected assets: Assets = {}
+  paramOptions?: ParamOptions
+  uploadSum = 0
+  client: any
+  assets: Assets = {}
 
   constructor(options?: ParamOptions) {
     this.paramOptions = options
@@ -74,7 +76,7 @@ class AliOSS {
         'bucket',
         'region',
       ].some((key: string) =>
-        (hasJson ? !jsonOptions[key] : !(options as object)[key])
+        hasJson ? !jsonOptions[key] : !(options as object)[key]
       )
     ) {
       throw new Error(
@@ -101,7 +103,7 @@ class AliOSS {
   }
 
   async upload(): Promise<void> {
-    if (this.config.format && !isNaN(Number(this.config.format))) {
+    if (this.config.format) {
       await this.delCacheAssets()
     } else if (this.config.deleteAll) {
       await this.delAllAssets()
@@ -242,15 +244,21 @@ class AliOSS {
   }
 
   async uploadLocale(dir: string): Promise<void> {
-    const result: any = fs.readdirSync(dir)
+    await this.uploadLocaleBase(dir, this.update.bind(this))
+  }
+
+  async uploadLocaleBase(dir: string, callback?: Function): Promise<void> {
+    const result: Array<string> = fs.readdirSync(dir)
     await this.asyncForEach(result, async (file: string) => {
       const filePath: string = path.join(dir, file)
       if (this.filterFile(filePath)) {
         if (fs.lstatSync(filePath).isDirectory()) {
-          await this.uploadLocale(filePath)
+          await this.uploadLocaleBase(filePath, callback)
         } else {
           const fileName: string = filePath.slice(this.config.output.length)
-          await this.update(fileName, filePath)
+          if (typeof callback === 'function') {
+            await callback(fileName, filePath)
+          }
         }
       }
     })

@@ -36,9 +36,19 @@ class WebpackAliOSSPlugin extends oss_1.default {
                 compiler.hooks.afterEmit.tapPromise('WebpackAliOSSPlugin', (compilation) => {
                     return new Promise((resolve, reject) => tslib_1.__awaiter(this, void 0, void 0, function* () {
                         // 上传文件总数
-                        const uploadCount = Object.keys(compilation.assets).filter((file) => compilation.assets[file].existsAt.includes(this.config.output) &&
-                            this.config.exclude &&
-                            this.config.exclude.every((reg) => file.search(reg) === -1)).length;
+                        let uploadCount = 0;
+                        yield this.uploadLocaleBase(this.config.output, () => {
+                            uploadCount++;
+                        });
+                        // const uploadCount: number = Object.keys(compilation.assets).filter(
+                        //   (file) =>
+                        //     compilation.assets[file].existsAt.includes(
+                        //       this.config.local ? this.config.output : ''
+                        //     ) &&
+                        //     this.config.exclude.every(
+                        //       (reg: RegExp) => file.search(reg) === -1
+                        //     )
+                        // ).length
                         // 初始化进度条 正在上传 [==---] 40%
                         const bar = new progress_1.default('正在上传 [:bar] :percent', {
                             total: uploadCount,

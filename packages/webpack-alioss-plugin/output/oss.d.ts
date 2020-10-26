@@ -1,10 +1,10 @@
 import { AliOSSConfig, ParamOptions, Assets } from './types';
 declare class AliOSS {
-    protected config: AliOSSConfig;
-    protected paramOptions?: ParamOptions;
-    protected uploadSum: number;
-    protected client: any;
-    protected assets: Assets;
+    config: AliOSSConfig;
+    paramOptions?: ParamOptions;
+    uploadSum: number;
+    client: any;
+    assets: Assets;
     constructor(options?: ParamOptions);
     static getFormat(format?: string): string;
     getFormat(format?: string): string;
@@ -19,5 +19,6 @@ declare class AliOSS {
     getFileName(name: string): string;
     update(name: string, content: any): Promise<void>;
     uploadLocale(dir: string): Promise<void>;
+    uploadLocaleBase(dir: string, callback?: Function): Promise<void>;
 }
 export default AliOSS;

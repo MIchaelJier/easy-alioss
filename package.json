@@ -11,6 +11,7 @@
   "scripts": {
     "serve:demo": "cd ./packages/plugin-demo && vue-cli-service serve",
     "build:demo": "cd ./packages/plugin-demo && vue-cli-service build",
+    "build:nuxt": "cd ./packages/nuxt-demo && nuxt build",
     "plugin:publish": "cd ./packages/webpack-alioss-plugin && npm publish --access public",
     "plugin:build": "cd ./packages/webpack-alioss-plugin && rollup -c",
     "plugin:tsc": "cd ./packages/webpack-alioss-plugin && tsc"

@@ -32,16 +32,19 @@ class WebpackAliOSSPlugin extends AliOSS {
         (compilation: Assets) => {
           return new Promise(async (resolve, reject) => {
             // 上传文件总数
-            const uploadCount: number = Object.keys(compilation.assets).filter(
-              (file) =>
-                compilation.assets[file].existsAt.includes(
-                  this.config.output
-                ) &&
-                this.config.exclude &&
-                this.config.exclude.every(
-                  (reg: RegExp) => file.search(reg) === -1
-                )
-            ).length
+            let uploadCount = 0
+            await this.uploadLocaleBase(this.config.output, () => {
+              uploadCount++
+            })
+            // const uploadCount: number = Object.keys(compilation.assets).filter(
+            //   (file) =>
+            //     compilation.assets[file].existsAt.includes(
+            //       this.config.local ? this.config.output : ''
+            //     ) &&
+            //     this.config.exclude.every(
+            //       (reg: RegExp) => file.search(reg) === -1
+            //     )
+            // ).length
             // 初始化进度条 正在上传 [==---] 40%
             const bar: any = new ProgressBar('正在上传 [:bar] :percent', {
               total: uploadCount,

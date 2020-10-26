@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const path_1 = tslib_1.__importDefault(require("path"));
 const ali_oss_1 = tslib_1.__importDefault(require("ali-oss"));
@@ -57,7 +59,12 @@ class AliOSS {
                 !hasJson) {
                 throw new Error(ansi_colors_1.default.red(`传入配置信息应该是Object`));
             }
-            if (['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some((key) => hasJson ? !jsonOptions[key] : !options[key])) {
+            if ([
+                'accessKeyId',
+                'accessKeySecret',
+                'bucket',
+                'region',
+            ].some((key) => hasJson ? !jsonOptions[key] : !options[key])) {
                 throw new Error(ansi_colors_1.default.red(`请填写正确的accessKeyId、accessKeySecret和bucket`));
             }
             this.config = Object.assign({
@@ -76,7 +83,7 @@ class AliOSS {
     }
     upload() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            if (this.config.format && !isNaN(Number(this.config.format))) {
+            if (this.config.format) {
                 yield this.delCacheAssets();
             }
             else if (this.config.deleteAll) {
@@ -218,16 +225,23 @@ class AliOSS {
     }
     uploadLocale(dir) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            yield this.uploadLocaleBase(dir, this.update.bind(this));
+        });
+    }
+    uploadLocaleBase(dir, callback) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const result = fs_1.default.readdirSync(dir);
             yield this.asyncForEach(result, (file) => tslib_1.__awaiter(this, void 0, void 0, function* () {
                 const filePath = path_1.default.join(dir, file);
                 if (this.filterFile(filePath)) {
                     if (fs_1.default.lstatSync(filePath).isDirectory()) {
-                        yield this.uploadLocale(filePath);
+                        yield this.uploadLocaleBase(filePath, callback);
                     }
                     else {
                         const fileName = filePath.slice(this.config.output.length);
-                        yield this.update(fileName, filePath);
+                        if (typeof callback === 'function') {
+                            yield callback(fileName, filePath);
+                        }
                     }
                 }
             }));
