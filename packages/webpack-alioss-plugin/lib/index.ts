@@ -46,6 +46,9 @@ class WebpackAliOSSPlugin extends AliOSS {
           // 初始化进度条 正在上传 [==---] 40%
           const bar: ProgressBar = new ProgressBar('正在上传 [:bar] :percent', {
             total: uploadCount,
+            complete: '█',
+            incomplete: '░',
+            width: 100,
           })
           // 检测uploadSum变化
           // eslint-disable-next-line accessor-pairs

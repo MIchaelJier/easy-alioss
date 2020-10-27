@@ -49,6 +49,9 @@ class WebpackAliOSSPlugin extends oss_1.default {
                     // 初始化进度条 正在上传 [==---] 40%
                     const bar = new progress_1.default('正在上传 [:bar] :percent', {
                         total: uploadCount,
+                        complete: '█',
+                        incomplete: '░',
+                        width: 100,
                     });
                     // 检测uploadSum变化
                     // eslint-disable-next-line accessor-pairs
