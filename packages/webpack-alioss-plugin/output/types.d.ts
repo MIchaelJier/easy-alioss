@@ -1,3 +1,7 @@
+import OSS from 'ali-oss';
+export declare type DeepPartial<T> = {
+    [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U];
+};
 export interface AliOSSConfig {
     accessKeyId: string;
     accessKeySecret: string;
@@ -11,8 +15,9 @@ export interface AliOSSConfig {
     limit: number;
     format: string;
 }
-export declare type ParamOptions = {
-    [propName in keyof AliOSSConfig]?: AliOSSConfig[propName];
+export declare type ParamOptions = Partial<AliOSSConfig>;
+export declare type Alioss = {
+    [propName in keyof OSS]?: OSS[propName] | any;
 };
 export interface Assets {
     [propName: string]: any;

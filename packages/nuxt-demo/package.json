@@ -16,6 +16,6 @@
     "nuxt": "^2.14.6"
   },
   "devDependencies": {
-    "@gdyfe/webpack-alioss-plugin": "0.1.4"
+    "@gdyfe/webpack-alioss-plugin": "0.1.5"
   }
 }

@@ -33,40 +33,37 @@ class WebpackAliOSSPlugin extends oss_1.default {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.init(compiler);
             if (compiler.hooks) {
-                compiler.hooks.afterEmit.tapPromise('WebpackAliOSSPlugin', (compilation) => {
-                    return new Promise((resolve, reject) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                        // 上传文件总数
-                        let uploadCount = 0;
-                        yield this.uploadLocaleBase(this.config.output, () => {
-                            uploadCount++;
-                        });
-                        // const uploadCount: number = Object.keys(compilation.assets).filter(
-                        //   (file) =>
-                        //     compilation.assets[file].existsAt.includes(
-                        //       this.config.local ? this.config.output : ''
-                        //     ) &&
-                        //     this.config.exclude.every(
-                        //       (reg: RegExp) => file.search(reg) === -1
-                        //     )
-                        // ).length
-                        // 初始化进度条 正在上传 [==---] 40%
-                        const bar = new progress_1.default('正在上传 [:bar] :percent', {
-                            total: uploadCount,
-                        });
-                        // 检测uploadSum变化
-                        // eslint-disable-next-line accessor-pairs
-                        Object.defineProperty(this, 'uploadSum', {
-                            set: function () {
-                                bar.tick();
-                                if (bar.complete) {
-                                    fancy_log_1.default(`\n${ansi_colors_1.default.green.inverse(' DONE ')} ${ansi_colors_1.default.green('upload complete')}\n`);
-                                }
-                            },
-                        });
-                        yield this.uploads(compilation);
-                        resolve();
-                    }));
-                });
+                compiler.hooks.afterEmit.tapPromise('WebpackAliOSSPlugin', (compilation) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                    let uploadCount = 0;
+                    yield this.uploadLocaleBase(this.config.output, () => {
+                        uploadCount++;
+                    });
+                    // const uploadCount: number = Object.keys(compilation.assets).filter(
+                    //   (file) =>
+                    //     compilation.assets[file].existsAt.includes(
+                    //       this.config.local ? this.config.output : ''
+                    //     ) &&
+                    //     this.config.exclude.every(
+                    //       (reg: RegExp) => file.search(reg) === -1
+                    //     )
+                    // ).length
+                    // 初始化进度条 正在上传 [==---] 40%
+                    const bar = new progress_1.default('正在上传 [:bar] :percent', {
+                        total: uploadCount,
+                    });
+                    // 检测uploadSum变化
+                    // eslint-disable-next-line accessor-pairs
+                    Object.defineProperty(this, 'uploadSum', {
+                        set: function () {
+                            bar.tick();
+                            if (bar.complete) {
+                                fancy_log_1.default(`\n${ansi_colors_1.default.green.inverse(' DONE ')} ${ansi_colors_1.default.green('upload complete')}\n`);
+                            }
+                        },
+                    });
+                    yield this.uploads(compilation);
+                    return Promise.resolve('finsh');
+                }));
                 // compiler.hooks.done.tapAsync("WebpackAliOSSPlugin", this.upload.bind(this))
             }
             else {

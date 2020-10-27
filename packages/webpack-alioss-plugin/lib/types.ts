@@ -1,3 +1,10 @@
+import OSS from 'ali-oss'
+
+export type DeepPartial<T> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U]
+}
+
 export interface AliOSSConfig {
   // extends paramConfig
   accessKeyId: string
@@ -13,8 +20,10 @@ export interface AliOSSConfig {
   format: string
 }
 
-export type ParamOptions = {
-  [propName in keyof AliOSSConfig]?: AliOSSConfig[propName]
+export type ParamOptions = Partial<AliOSSConfig>
+
+export type Alioss = {
+  [propName in keyof OSS]?: OSS[propName] | any
 }
 
 export interface Assets {

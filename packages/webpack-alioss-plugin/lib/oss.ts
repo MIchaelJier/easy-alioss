@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 import fs from 'fs'
 import path from 'path'
 import OSS from 'ali-oss'
 import colors from 'ansi-colors'
 import log from 'fancy-log'
 import { regexp as _exp, formatDate } from './utils'
-import { AliOSSConfig, ParamOptions, Assets } from './types'
+import { AliOSSConfig, ParamOptions, Assets, Alioss } from './types'
 const regexp: RegExp = _exp
 
 class AliOSS {
@@ -25,7 +24,7 @@ class AliOSS {
   }
   paramOptions?: ParamOptions
   uploadSum = 0
-  client: any
+  client: Alioss = {}
   assets: Assets = {}
 
   constructor(options?: ParamOptions) {
@@ -70,13 +69,10 @@ class AliOSS {
       throw new Error(colors.red(`传入配置信息应该是Object`))
     }
     if (
-      [
-        'accessKeyId',
-        'accessKeySecret',
-        'bucket',
-        'region',
-      ].some((key: string) =>
-        hasJson ? !jsonOptions[key] : !(options as object)[key]
+      ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some(
+        (key: string): boolean =>
+          // eslint-disable-next-line prettier/prettier
+        (hasJson ? !jsonOptions[key] : !(options as ParamOptions)[key])
       )
     ) {
       throw new Error(
@@ -104,23 +100,30 @@ class AliOSS {
 
   async upload(): Promise<void> {
     if (this.config.format) {
-      await this.delCacheAssets()
+      await this.delCacheAssets().catch((err) => {
+        log(`\n${colors.red.inverse(' ERROR ')} ${colors.red(err)}\n`)
+      })
     } else if (this.config.deleteAll) {
-      await this.delAllAssets()
+      await this.delAllAssets().catch((err) => {
+        log(`\n${colors.red.inverse(' ERROR ')} ${colors.red(err)}\n`)
+      })
     } else {
-      await this.uploadAssets()
+      await this.uploadAssets().catch((err) => {
+        log(`\n${colors.red.inverse(' ERROR ')} ${colors.red(err)}\n`)
+      })
     }
   }
 
-  async delFilterAssets(prefix: string): Promise<void> {
+  async delFilterAssets(prefix: string | undefined): Promise<void> {
     try {
       const list: Array<string> = []
-      list.push(prefix)
-      let result: any = await this.client.list({
+      list.push(prefix as string)
+      let result = await this.client.list({
         prefix,
         'max-keys': 1000,
       })
       if (result.objects) {
+        // eslint-disable-next-line prettier/prettier
         result.objects.forEach((file) => {
           list.push(file.name)
         })
@@ -137,9 +140,9 @@ class AliOSS {
 
   async delCacheAssets(): Promise<void> {
     const prefix: string = this.config.prefix
-    const list: Array<any> = []
+    const list: Array<number> = []
     try {
-      const dirList: any = await this.client.list({
+      const dirList: OSS.ListObjectResult = await this.client.list({
         prefix: `${prefix}/`,
         delimiter: '/',
       })
@@ -151,7 +154,7 @@ class AliOSS {
 
       if (list.length > 1) {
         const limit: number = this.config.limit > 3 ? this.config.limit - 1 : 2
-        const array: Array<any> = list
+        const array: Array<number> = list
           .slice()
           .sort((a, b) => b - a)
           .slice(limit)
@@ -168,8 +171,10 @@ class AliOSS {
     }
   }
 
-  async asyncForEach(arr: Array<any>, cb: Function): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async asyncForEach(arr: Array<unknown>, cb: Function): Promise<void> {
     for (let i = 0; i < arr.length; i++) {
+      // eslint-disable-next-line no-await-in-loop
       await cb(arr[i], i)
     }
   }
@@ -177,11 +182,11 @@ class AliOSS {
   async delAllAssets(): Promise<void> {
     try {
       const { prefix } = this.config
-      let result: any = await this.client.list({
+      let result = await this.client.list({
         prefix,
         'max-keys': 1000,
       })
-      if (result.objects) {
+      if ((result as OSS.ListObjectResult).objects) {
         result = result.objects.map((file) => file.name)
       }
       if (Array.isArray(result)) {
@@ -216,7 +221,8 @@ class AliOSS {
     return (
       !exclude ||
       (Array.isArray(exclude) && !exclude.some((item) => item.test(name))) ||
-      (!Array.isArray(exclude) && !(exclude as any).test(name))
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      (!Array.isArray(exclude) && !(exclude as { test: Function }).test(name))
     )
   }
 
@@ -228,10 +234,10 @@ class AliOSS {
     return path.join(prefix, name).replace(/\\/g, '/')
   }
 
-  async update(name: string, content: any): Promise<void> {
+  async update(name: string, content: string | Buffer): Promise<void> {
     const fileName: string = this.getFileName(name)
     try {
-      const result: any = await this.client.put(fileName, content)
+      const result = await this.client.put(fileName, content)
       if (+result.res.statusCode === 200) {
         this.uploadSum++
         // log(colors.green(`${fileName}上传成功!`))
@@ -247,6 +253,7 @@ class AliOSS {
     await this.uploadLocaleBase(dir, this.update.bind(this))
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   async uploadLocaleBase(dir: string, callback?: Function): Promise<void> {
     const result: Array<string> = fs.readdirSync(dir)
     await this.asyncForEach(result, async (file: string) => {

@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 const fs_1 = tslib_1.__importDefault(require("fs"));
 const path_1 = tslib_1.__importDefault(require("path"));
 const ali_oss_1 = tslib_1.__importDefault(require("ali-oss"));
@@ -26,6 +25,7 @@ class AliOSS {
             format: '',
         };
         this.uploadSum = 0;
+        this.client = {};
         this.assets = {};
         this.paramOptions = options;
     }
@@ -59,12 +59,9 @@ class AliOSS {
                 !hasJson) {
                 throw new Error(ansi_colors_1.default.red(`传入配置信息应该是Object`));
             }
-            if ([
-                'accessKeyId',
-                'accessKeySecret',
-                'bucket',
-                'region',
-            ].some((key) => hasJson ? !jsonOptions[key] : !options[key])) {
+            if (['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some((key) => 
+            // eslint-disable-next-line prettier/prettier
+            (hasJson ? !jsonOptions[key] : !options[key]))) {
                 throw new Error(ansi_colors_1.default.red(`请填写正确的accessKeyId、accessKeySecret和bucket`));
             }
             this.config = Object.assign({
@@ -84,13 +81,19 @@ class AliOSS {
     upload() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (this.config.format) {
-                yield this.delCacheAssets();
+                yield this.delCacheAssets().catch((err) => {
+                    fancy_log_1.default(`\n${ansi_colors_1.default.red.inverse(' ERROR ')} ${ansi_colors_1.default.red(err)}\n`);
+                });
             }
             else if (this.config.deleteAll) {
-                yield this.delAllAssets();
+                yield this.delAllAssets().catch((err) => {
+                    fancy_log_1.default(`\n${ansi_colors_1.default.red.inverse(' ERROR ')} ${ansi_colors_1.default.red(err)}\n`);
+                });
             }
             else {
-                yield this.uploadAssets();
+                yield this.uploadAssets().catch((err) => {
+                    fancy_log_1.default(`\n${ansi_colors_1.default.red.inverse(' ERROR ')} ${ansi_colors_1.default.red(err)}\n`);
+                });
             }
         });
     }
@@ -104,6 +107,7 @@ class AliOSS {
                     'max-keys': 1000,
                 });
                 if (result.objects) {
+                    // eslint-disable-next-line prettier/prettier
                     result.objects.forEach((file) => {
                         list.push(file.name);
                     });
@@ -150,9 +154,11 @@ class AliOSS {
             }
         });
     }
+    // eslint-disable-next-line @typescript-eslint/ban-types
     asyncForEach(arr, cb) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             for (let i = 0; i < arr.length; i++) {
+                // eslint-disable-next-line no-await-in-loop
                 yield cb(arr[i], i);
             }
         });
@@ -196,6 +202,7 @@ class AliOSS {
         const { exclude } = this.config;
         return (!exclude ||
             (Array.isArray(exclude) && !exclude.some((item) => item.test(name))) ||
+            // eslint-disable-next-line @typescript-eslint/ban-types
             (!Array.isArray(exclude) && !exclude.test(name)));
     }
     getFileName(name) {
@@ -228,6 +235,7 @@ class AliOSS {
             yield this.uploadLocaleBase(dir, this.update.bind(this));
         });
     }
+    // eslint-disable-next-line @typescript-eslint/ban-types
     uploadLocaleBase(dir, callback) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const result = fs_1.default.readdirSync(dir);

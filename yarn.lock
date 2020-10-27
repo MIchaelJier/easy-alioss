@@ -1337,6 +1337,11 @@
   resolved "https://registry.npm.taobao.org/@soda/get-current-script/download/@soda/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha1-pTUV2yXYA4N0OBtzryC7Ty5QjYc=
 
+"@types/ali-oss@^6.0.5":
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/@types/ali-oss/-/ali-oss-6.0.5.tgz#50621a129bc80dbc4adb3764c769ca2fecade71a"
+  integrity sha512-qLPmkjjuHNn8GeMZWn8fftETCzrdwo0t7Ls+UwJkZcMAZorNtaodZJG8f/TlmAc6w9Nqf5Gya+XPeaaHFo+tBA==
+
 "@types/anymatch@*":
   version "1.3.1"
   resolved "https://registry.npm.taobao.org/@types/anymatch/download/@types/anymatch-1.3.1.tgz#336badc1beecb9dacc38bea2cf32adf627a8421a"
