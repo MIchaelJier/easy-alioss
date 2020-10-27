@@ -32,11 +32,6 @@ class AliOSS {
   }
 
   static getFormat(format = 'YYYYMMDDhhmm'): string {
-    return this.getFormat(format)
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getFormat(format = 'YYYYMMDDhhmm'): string {
     if (!regexp.test(format)) {
       throw new Error(
         `参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成`

@@ -21,7 +21,7 @@ class WebpackAliOSSPlugin extends AliOSS {
     }
     // eslint-disable-next-line no-undefined
     this.config.format === undefined &&
-      (this.config.format = super.getFormat('YYMMDD'))
+      (this.config.format = WebpackAliOSSPlugin.getFormat('YYMMDD'))
   }
 
   async apply(compiler: Compiler): Promise<void> {

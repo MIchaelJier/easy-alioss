@@ -7,7 +7,6 @@ declare class AliOSS {
     assets: Assets;
     constructor(options?: ParamOptions);
     static getFormat(format?: string): string;
-    getFormat(format?: string): string;
     init(options?: ParamOptions): Promise<void>;
     upload(): Promise<void>;
     delFilterAssets(prefix: string | undefined): Promise<void>;

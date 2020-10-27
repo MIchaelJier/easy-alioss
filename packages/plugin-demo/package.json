@@ -15,7 +15,7 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@gdyfe/webpack-alioss-plugin": "0.1.5",
+    "@gdyfe/webpack-alioss-plugin": "0.1.6",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",

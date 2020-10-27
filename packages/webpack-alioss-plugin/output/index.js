@@ -10,8 +10,7 @@ class WebpackAliOSSPlugin extends oss_1.default {
     // }
     init(compiler) {
         const _super = Object.create(null, {
-            init: { get: () => super.init },
-            getFormat: { get: () => super.getFormat }
+            init: { get: () => super.init }
         });
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield _super.init.call(this, this.paramOptions);
@@ -26,7 +25,7 @@ class WebpackAliOSSPlugin extends oss_1.default {
             }
             // eslint-disable-next-line no-undefined
             this.config.format === undefined &&
-                (this.config.format = _super.getFormat.call(this, 'YYMMDD'));
+                (this.config.format = WebpackAliOSSPlugin.getFormat('YYMMDD'));
         });
     }
     apply(compiler) {
