@@ -54,4 +54,4 @@ new WebpackAliOSSPlugin({
 }
 ```
 ## 截图
-![avatar](/screenshot/Snipaste_2020-10-27_10-56-10.png)  
+![avatar](/screenshot/Snipaste_2020-10-27_15-02-53.png)  
