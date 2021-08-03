@@ -1,6 +1,6 @@
 {
   "name": "nuxt-demo",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "> TODO: description",
   "author": "MichaelJier <chem908430737@icloud.com >",
   "homepage": "https://github.com/MIchaelJier/webpack-yun-oss.git/tree/master/packages/nuxt-demo#readme",
@@ -16,6 +16,6 @@
     "nuxt": "^2.14.6"
   },
   "devDependencies": {
-    "@gdyfe/webpack-alioss-plugin": "0.1.6"
+    "@gdyfe/webpack-alioss-plugin": "^0.2.1"
   }
 }

@@ -1,6 +1,14 @@
 export const regexp = /YYYY|YY|MM|DD|HH|hh|mm|SS|ss/g
 const week: Array<string> = ['01', '02', '03', '04', '05', '06', '07']
 
+export function isValidKey(
+  key: string | number | symbol,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  object: object
+): key is keyof typeof object {
+  return key in object
+}
+
 export const getDate = function (date: string | number | Date): Date {
   if (date instanceof Date) {
     return date
@@ -23,6 +31,7 @@ export const formatDate = function (
   // eslint-disable-next-line no-param-reassign
   const date = getDate(unknownDate)
   const padDate = (time: number): string | number =>
+    // eslint-disable-next-line prettier/prettier
     (time < 10 ? '0' + time : time)
 
   return format.replace(regexp, function (key: string): string {

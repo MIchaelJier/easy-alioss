@@ -5,4 +5,4 @@ declare class WebpackAliOSSPlugin extends AliOSS {
     apply(compiler: Compiler): Promise<void>;
     uploads(compilation: Assets, callback?: Function): Promise<void | Function>;
 }
-export = WebpackAliOSSPlugin;
+export default WebpackAliOSSPlugin;

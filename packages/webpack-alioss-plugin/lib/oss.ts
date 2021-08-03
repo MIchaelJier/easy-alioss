@@ -4,9 +4,16 @@ import path from 'path'
 import OSS from 'ali-oss'
 import colors from 'ansi-colors'
 import log from 'fancy-log'
-import { regexp as _exp, formatDate } from './utils'
+import { cosmiconfigSync } from 'cosmiconfig'
+
+import { regexp as _exp, formatDate, isValidKey } from './utils'
 import { AliOSSConfig, ParamOptions, Assets, Alioss } from './types'
 const regexp: RegExp = _exp
+const FILE_FIRSTNAME = 'oss'
+const FILE_ALLOW_NAMES = [
+  `${FILE_FIRSTNAME}.config.js`,
+  `${FILE_FIRSTNAME}.config.json`,
+]
 
 class AliOSS {
   config: AliOSSConfig = {
@@ -41,20 +48,27 @@ class AliOSS {
   }
 
   async init(options?: ParamOptions): Promise<void> {
-    const jsonName = 'oss.config.json'
-    const hasJson: boolean = fs.existsSync(jsonName)
+    const searchPlaces = FILE_ALLOW_NAMES
+    // cosmiconfig 获取congfig
+    const fileConfig = cosmiconfigSync('user-config', {
+      searchPlaces,
+    }).search()
+    const hasJson: boolean = fileConfig !== null
     let jsonOptions: ParamOptions = {}
-
-    try {
-      jsonOptions = hasJson
-        ? JSON.parse(fs.readFileSync(jsonName, 'utf8').toString())
-        : {}
-    } catch (error) {
-      log(colors.red(`JSON配置有误! reason: ${error}`))
+    if (fileConfig !== null) {
+      jsonOptions = fileConfig.config
+    } else {
+      log(colors.red(`JSON配置有误!`))
     }
     if (!options && !hasJson) {
       throw new Error(
-        colors.red(`请配置插件信息，配置${jsonName}或new时传入参数`)
+        colors.red(
+          `请配置插件信息，配置${JSON.stringify(FILE_ALLOW_NAMES).replace(
+            // eslint-disable-next-line no-useless-escape
+            /\"|\'|]|\[/g,
+            ''
+          )}或new时传入参数`
+        )
       )
     }
     if (
@@ -67,7 +81,7 @@ class AliOSS {
       ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some(
         (key: string): boolean =>
           // eslint-disable-next-line prettier/prettier
-        (hasJson ? !jsonOptions[key] : !(options as ParamOptions)[key])
+        (hasJson ? isValidKey(key, jsonOptions) && !jsonOptions[key] : isValidKey(key, options as ParamOptions) && !(options as ParamOptions)[key])
       )
     ) {
       throw new Error(
@@ -119,7 +133,7 @@ class AliOSS {
       })
       if (result.objects) {
         // eslint-disable-next-line prettier/prettier
-        result.objects.forEach((file) => {
+        result.objects.forEach((file: any) => {
           list.push(file.name)
         })
       }
@@ -182,7 +196,7 @@ class AliOSS {
         'max-keys': 1000,
       })
       if ((result as OSS.ListObjectResult).objects) {
-        result = result.objects.map((file) => file.name)
+        result = result.objects.map((file: any) => file.name)
       }
       if (Array.isArray(result)) {
         result = await this.client.deleteMulti(result, { quiet: true })

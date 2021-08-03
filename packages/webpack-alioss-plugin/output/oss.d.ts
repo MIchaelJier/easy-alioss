@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { AliOSSConfig, ParamOptions, Assets, Alioss } from './types';
 declare class AliOSS {
     config: AliOSSConfig;

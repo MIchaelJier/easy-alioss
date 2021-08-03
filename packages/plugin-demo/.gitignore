@@ -4,6 +4,7 @@ node_modules
 
 # Private Settings
 oss.config.json 
+oss.config.js
 
 # local env files
 .env.local

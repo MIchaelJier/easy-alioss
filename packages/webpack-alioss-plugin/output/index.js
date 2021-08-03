@@ -1,97 +1,16 @@
-"use strict";
-const tslib_1 = require("tslib");
-const ansi_colors_1 = tslib_1.__importDefault(require("ansi-colors"));
-const fancy_log_1 = tslib_1.__importDefault(require("fancy-log"));
-const oss_1 = tslib_1.__importDefault(require("./oss"));
-const progress_1 = tslib_1.__importDefault(require("progress"));
-class WebpackAliOSSPlugin extends oss_1.default {
-    // constructor(options?: object) {
-    //   super(options)
-    // }
-    init(compiler) {
-        const _super = Object.create(null, {
-            init: { get: () => super.init }
-        });
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            yield _super.init.call(this, this.paramOptions);
-            if (!this.config.output && this.config.local) {
-                const output = compiler.outputPath || compiler.options.output.path;
-                if (output) {
-                    this.config.output = output;
-                }
-                else {
-                    throw new Error(ansi_colors_1.default.red(`请配置output`));
-                }
-            }
-            // eslint-disable-next-line no-undefined
-            this.config.format === undefined &&
-                (this.config.format = WebpackAliOSSPlugin.getFormat('YYMMDD'));
-        });
-    }
-    apply(compiler) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            yield this.init(compiler);
-            if (compiler.hooks) {
-                compiler.hooks.afterEmit.tapPromise('WebpackAliOSSPlugin', (compilation) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    let uploadCount = 0;
-                    yield this.uploadLocaleBase(this.config.output, () => {
-                        uploadCount++;
-                    });
-                    // const uploadCount: number = Object.keys(compilation.assets).filter(
-                    //   (file) =>
-                    //     compilation.assets[file].existsAt.includes(
-                    //       this.config.local ? this.config.output : ''
-                    //     ) &&
-                    //     this.config.exclude.every(
-                    //       (reg: RegExp) => file.search(reg) === -1
-                    //     )
-                    // ).length
-                    // 初始化进度条 正在上传 [==---] 40%
-                    const bar = new progress_1.default('正在上传 [:bar] :percent', {
-                        total: uploadCount,
-                        complete: '█',
-                        incomplete: '░',
-                        width: 100,
-                    });
-                    // 检测uploadSum变化
-                    // eslint-disable-next-line accessor-pairs
-                    Object.defineProperty(this, 'uploadSum', {
-                        set: function () {
-                            bar.tick();
-                            if (bar.complete) {
-                                fancy_log_1.default(`\n${ansi_colors_1.default.green.inverse(' DONE ')} ${ansi_colors_1.default.green('upload complete')}\n`);
-                            }
-                        },
-                    });
-                    yield this.uploads(compilation);
-                    return Promise.resolve('finsh');
-                }));
-                // compiler.hooks.done.tapAsync("WebpackAliOSSPlugin", this.upload.bind(this))
-            }
-            else {
-                throw new Error(ansi_colors_1.default.red(`您的Webapck版本过低`));
-                // compiler.plugin('afterEmit', this.upload.bind(this))
-            }
-        });
-    }
-    uploads(compilation, 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    callback
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    ) {
-        const _super = Object.create(null, {
-            upload: { get: () => super.upload }
-        });
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            if (typeof compilation === 'undefined') {
-                return this.uploadAssets();
-            }
-            this.assets = compilation.assets;
-            yield _super.upload.call(this);
-            if (typeof callback === 'function') {
-                callback();
-            }
-        });
-    }
-}
-module.exports = WebpackAliOSSPlugin;
+"use strict";var t=require("ansi-colors"),e=require("fancy-log"),i=require("fs"),s=require("path"),o=require("ali-oss"),n=require("cosmiconfig"),r=require("progress");function c(t){return t&&"object"==typeof t&&"default"in t?t:{default:t}}var l=c(t),a=c(e),u=c(i),d=c(s),f=c(o),h=c(r);
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+function p(t,e,i,s){return new(i||(i=Promise))((function(o,n){function r(t){try{l(s.next(t))}catch(t){n(t)}}function c(t){try{l(s.throw(t))}catch(t){n(t)}}function l(t){var e;t.done?o(t.value):(e=t.value,e instanceof i?e:new i((function(t){t(e)}))).then(r,c)}l((s=s.apply(t,e||[])).next())}))}const y=/YYYY|YY|MM|DD|HH|hh|mm|SS|ss/g,g=["01","02","03","04","05","06","07"];function m(t,e){return t in e}const v=function(t="",e="YYYYMMDDHHmm"){const i=function(t){return t instanceof Date?t:"string"==typeof t?(t=t.replace(/\-/g,"/"),new Date(t)):"number"==typeof t?new Date(t):new Date}(t),s=t=>t<10?"0"+t:t;return e.replace(y,(function(t){switch(t){case"YYYY":return i.getFullYear()+"";case"YY":return(i.getFullYear()+"").slice(2);case"MM":return s(i.getMonth()+1)+"";case"DD":return s(i.getDate())+"";case"HH":case"hh":return s(i.getHours())+"";case"mm":return s(i.getMinutes())+"";case"SS":case"ss":return s(i.getSeconds())+"";case"week":return g[i.getDay()];default:return" "}}))},Y=y,w=["oss.config.js","oss.config.json"];class A extends class{constructor(t){this.config={accessKeyId:"",accessKeySecret:"",region:"",bucket:"",prefix:"",exclude:[],deleteAll:!1,local:!1,output:"",limit:5,format:""},this.uploadSum=0,this.client={},this.assets={},this.paramOptions=t}static getFormat(t="YYYYMMDDhhmm"){if(!Y.test(t))throw new Error("参数格式由纯数字或YYYY、YY、MM、DD、HH、hh、mm、SS、ss组成");return v(new Date,t)}init(t){return p(this,void 0,void 0,(function*(){const e=n.cosmiconfigSync("user-config",{searchPlaces:w}).search(),i=null!==e;let s={};if(null!==e?s=e.config:a.default(l.default.red("JSON配置有误!")),!t&&!i)throw new Error(l.default.red(`请配置插件信息，配置${JSON.stringify(w).replace(/\"|\'|]|\[/g,"")}或new时传入参数`));if("[object Object]"!==Object.prototype.toString.call(t)&&!i)throw new Error(l.default.red("传入配置信息应该是Object"));if(["accessKeyId","accessKeySecret","bucket","region"].some((e=>i?m(e,s)&&!s[e]:m(e,t)&&!t[e])))throw new Error(l.default.red("请填写正确的accessKeyId、accessKeySecret和bucket"));if(this.config=Object.assign({prefix:"",exclude:[/.*\.html$/],deleteAll:!1,local:!0,output:"",limit:5},t,s),this.config.format&&!/[0-9]+/.test(this.config.format))throw new Error("format应该是纯数字");this.client=new f.default(this.config)}))}upload(){return p(this,void 0,void 0,(function*(){this.config.format?yield this.delCacheAssets().catch((t=>{a.default(`\n${l.default.red.inverse(" ERROR ")} ${l.default.red(t)}\n`)})):this.config.deleteAll?yield this.delAllAssets().catch((t=>{a.default(`\n${l.default.red.inverse(" ERROR ")} ${l.default.red(t)}\n`)})):yield this.uploadAssets().catch((t=>{a.default(`\n${l.default.red.inverse(" ERROR ")} ${l.default.red(t)}\n`)}))}))}delFilterAssets(t){return p(this,void 0,void 0,(function*(){try{const e=[];e.push(t);let i=yield this.client.list({prefix:t,"max-keys":1e3});i.objects&&i.objects.forEach((t=>{e.push(t.name)})),Array.isArray(e)&&(i=yield this.client.deleteMulti(e,{quiet:!0}))}catch(t){a.default(l.default.red(`删除缓存文件失败! reason: ${t}`))}}))}delCacheAssets(){return p(this,void 0,void 0,(function*(){const t=this.config.prefix,e=[];try{const i=yield this.client.list({prefix:`${t}/`,delimiter:"/"});if(i.prefixes&&i.prefixes.forEach((i=>{e.push(+i.slice(t.length+1,-1))})),e.length>1){const i=this.config.limit>3?this.config.limit-1:2,s=e.slice().sort(((t,e)=>e-t)).slice(i);yield this.asyncForEach(s,(e=>p(this,void 0,void 0,(function*(){yield this.delFilterAssets(`${t}/${e}`)}))))}yield this.uploadAssets()}catch(t){yield this.uploadAssets()}}))}asyncForEach(t,e){return p(this,void 0,void 0,(function*(){for(let i=0;i<t.length;i++)yield e(t[i],i)}))}delAllAssets(){return p(this,void 0,void 0,(function*(){try{const{prefix:t}=this.config;let e=yield this.client.list({prefix:t,"max-keys":1e3});e.objects&&(e=e.objects.map((t=>t.name))),Array.isArray(e)&&(e=yield this.client.deleteMulti(e,{quiet:!0})),yield this.uploadAssets()}catch(t){yield this.uploadAssets()}}))}uploadAssets(){return p(this,void 0,void 0,(function*(){this.config.local?yield this.uploadLocale(this.config.output):yield this.asyncForEach(Object.keys(this.assets),(t=>p(this,void 0,void 0,(function*(){this.filterFile(t)&&(yield this.update(t,Buffer.from(this.assets[t].source(),"utf8")))}))))}))}filterFile(t){const{exclude:e}=this.config;return!e||Array.isArray(e)&&!e.some((e=>e.test(t)))||!Array.isArray(e)&&!e.test(t)}getFileName(t){const{config:e}=this,i=e.format?d.default.join(e.prefix,e.format.toString()):e.prefix;return d.default.join(i,t).replace(/\\/g,"/")}update(t,e){return p(this,void 0,void 0,(function*(){const i=this.getFileName(t);try{200==+(yield this.client.put(i,e)).res.statusCode?this.uploadSum++:a.default(l.default.red(`${i}上传失败!`))}catch(t){a.default(l.default.red(`${i}上传失败! reason: ${t}`))}}))}uploadLocale(t){return p(this,void 0,void 0,(function*(){yield this.uploadLocaleBase(t,this.update.bind(this))}))}uploadLocaleBase(t,e){return p(this,void 0,void 0,(function*(){const i=u.default.readdirSync(t);yield this.asyncForEach(i,(i=>p(this,void 0,void 0,(function*(){const s=d.default.join(t,i);if(this.filterFile(s))if(u.default.lstatSync(s).isDirectory())yield this.uploadLocaleBase(s,e);else{const t=s.slice(this.config.output.length);"function"==typeof e&&(yield e(t,s))}}))))}))}}{init(t){const e=Object.create(null,{init:{get:()=>super.init}});return p(this,void 0,void 0,(function*(){if(yield e.init.call(this,this.paramOptions),!this.config.output&&this.config.local){const e=t.outputPath||t.options.output.path;if(!e)throw new Error(l.default.red("请配置output"));this.config.output=e}void 0===this.config.format&&(this.config.format=A.getFormat("YYMMDD"))}))}apply(t){return p(this,void 0,void 0,(function*(){if(yield this.init(t),!t.hooks)throw new Error(l.default.red("您的Webapck版本过低"));t.hooks.afterEmit.tapPromise("WebpackAliOSSPlugin",(t=>p(this,void 0,void 0,(function*(){let e=0;yield this.uploadLocaleBase(this.config.output,(()=>{e++}));const i=new h.default("正在上传 [:bar] :percent",{total:e,complete:"█",incomplete:"░",width:100});return Object.defineProperty(this,"uploadSum",{set:function(){i.tick(),i.complete&&a.default(`\n${l.default.green.inverse(" DONE ")} ${l.default.green("upload complete")}\n`)}}),yield this.uploads(t),Promise.resolve("finsh")}))))}))}uploads(t,e){const i=Object.create(null,{upload:{get:()=>super.upload}});return p(this,void 0,void 0,(function*(){if(void 0===t)return this.uploadAssets();this.assets=t.assets,yield i.upload.call(this),"function"==typeof e&&e()}))}}module.exports=A;

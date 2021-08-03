@@ -92,4 +92,4 @@ class WebpackAliOSSPlugin extends AliOSS {
   }
 }
 
-export = WebpackAliOSSPlugin
+export default WebpackAliOSSPlugin
