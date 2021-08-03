@@ -1,6 +1,6 @@
 {
   "name": "@gdyfe/webpack-alioss-plugin",
-  "version": "0.1.6",
+  "version": "0.2.2",
   "description": "A webpack plugin to upload assets to aliyun oss",
   "repository": "git@github.com:MIchaelJier/webpack-yun-oss.git",
   "author": "MichaelJier <chem908430737@icloud.com>",
