@@ -1,4 +1,4 @@
-export const regexp = /YYYY|YY|MM|DD|HH|hh|mm|SS|ss/g
+export const regexp = /YYYY|YY|MM|DD|HH|hh|mm|SS|ss|week/g
 const week: Array<string> = ['01', '02', '03', '04', '05', '06', '07']
 
 export function isValidKey(
