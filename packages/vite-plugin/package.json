@@ -20,31 +20,31 @@
     "vite": ">=3.0.0"
   },
   "dependencies": {
+    "@easy-alioss/core": "^1.0.0",
     "ansi-colors": "^4.1.3",
     "fancy-log": "^1.3.3",
-    "progress": "^2.0.3",
-    "@easy-alioss/core": "^1.0.0"
+    "progress": "^2.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
-    "@types/inquirer": "^9.0.3",
-    "@babel/core": "^7.23.2",
     "@types/fancy-log": "^1.3.1",
+    "@types/glob": "^8.0.1",
+    "@types/inquirer": "^9.0.3",
     "@types/node": "^14.14.2",
     "@types/progress": "^2.0.3",
     "@types/rimraf": "^3.0.2",
-    "@types/glob": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "pnpm": "^7.18.1",
     "rollup": "^4.1.0",
+    "rollup-plugin-dts": "^5.2.0",
     "ts-node": "^9.0.0",
     "tslib": "^2.5.0",
-    "pnpm": "^7.18.1",
     "typescript": "^4.9.4",
-    "rollup-plugin-dts": "^5.2.0",
     "vite": ">=3.0.0"
   },
   "keywords": [
