@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "author": "MichaelJier <chem908430737@icloud.com >",
+  "scripts": {
+    "dev": "umi dev",
+    "build": "umi build"
+  },
+  "resolutions": {
+    "@easy-alioss/webpack-plugin": "link:../../../packages/webpack-plugin",
+    "@easy-alioss/core": "link:../../../packages/core"
+  },
+  "dependencies": {
+    "umi": "^3.5.0"
+  },
+  "devDependencies": {
+    "@easy-alioss/webpack-plugin": "link:../../../packages/webpack-plugin",
+    "@easy-alioss/core": "link:../../../packages/core",
+    "@types/react": "^18.0.33",
+    "@types/react-dom": "^18.0.11",
+    "typescript": "^5.0.3"
+  }
+}

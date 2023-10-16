@@ -1,0 +1,24 @@
+{
+  "name": "my-vue-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "resolutions": {
+    "@easy-alioss/vite-plugin": "link:../../../packages/vite-plugin",
+    "@easy-alioss/core": "link:../../../packages/core"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@easy-alioss/vite-plugin": "link:../../../packages/vite-plugin",
+    "@easy-alioss/core": "link:../../../packages/core",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.5"
+  }
+}

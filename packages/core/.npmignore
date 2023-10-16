@@ -1,0 +1,5 @@
+.vscode
+.husky
+node_modules
+examples
+src
