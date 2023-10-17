@@ -1,4 +1,9 @@
-# easy-alioss
+# easy-alioss  
+
+[![npm version](https://img.shields.io/npm/v/@easy-alioss/vite-plugin.svg?style=flat)]([https://www.npmjs.com/package/svga](https://www.npmjs.com/package/@easy-alioss/vite-plugin)) 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://reactjs.org/docs/how-to-contribute.html#your-first-pull-request)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)]([https://github.com/NetEase/tango/blob/main/LICENSE](https://github.com/MIchaelJier/easy-alioss/blob/main/LICENSE))
+
 A plugin to upload assets to aliyun oss
 
 ## 安装 
